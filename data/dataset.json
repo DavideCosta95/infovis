@@ -1,0 +1,62 @@
+[
+  {
+    "depth": 350,
+    "width": 55,
+    "turret": 15,
+    "porthole": 2
+  },
+  {
+    "depth": 450,
+    "width": 45,
+    "turret": 25,
+    "porthole": 5
+  },
+  {
+    "depth": 300,
+    "width": 50,
+    "turret": 55,
+    "porthole": 2
+  },
+  {
+    "depth": 250,
+    "width": 40,
+    "turret": 10,
+    "porthole": 3
+  },
+  {
+    "depth": 400,
+    "width": 30,
+    "turret": 25,
+    "porthole": 2
+  },
+  {
+    "depth": 100,
+    "width": 45,
+    "turret": 10,
+    "porthole": 3
+  },
+  {
+    "depth": 700,
+    "width": 50,
+    "turret": 30,
+    "porthole": 4
+  },
+  {
+    "depth": 150,
+    "width": 30,
+    "turret": 10,
+    "porthole": 1
+  },
+  {
+    "depth": 250,
+    "width": 60,
+    "turret": 40,
+    "porthole": 10
+  },
+  {
+    "depth": 650,
+    "width": 50,
+    "turret": 35,
+    "porthole": 4
+  }
+]
