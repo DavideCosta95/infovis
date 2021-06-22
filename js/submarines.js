@@ -174,6 +174,8 @@ function loadDataset() {
                 .attr("class", "second-porthole")
                 .attr("fill", "black");
 
+            // used only 2 portholes to make the submarines look cuter and more fish-like
+
             // turret
             update.select(".turret")
                 .transition(tx)
