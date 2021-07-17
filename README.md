@@ -15,7 +15,7 @@ run `npm install`
 
 ### Running
 
-Onn a **unix** OS: run `sh unix_runner.sh` from terminal.
+On a **unix** OS: run `sh unix_runner.sh` from terminal.
 <br>On a **Windows** OS, run `sh windows_runner.bat` from command prompt.
 <br>The port used by this application is displayed in the terminal.
 

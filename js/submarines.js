@@ -3,6 +3,18 @@ const svgHeight = 800;
 const submarine_height = 30;
 const transitionDuration = 1000;
 
+const minDepth = 100;
+const maxDepth = 700;
+const minWidth = 30;
+const maxWidth = 60;
+const minTurret = 7;
+const maxTurret = 35;
+const minPorthole = 1;
+const maxPorthole = 7;
+
+let scalesValues = [];
+let scaleFunctions = [];
+
 const svg = d3.select("body").append("svg").attr('width', svgWidth).attr('height', svgHeight);
 
 svg.append("rect")
@@ -16,8 +28,26 @@ let positionIndex = 0;
 const positionStep = 130;
 let usedColors = [];
 
+function loadScales() {
+    scalesValues["depth"] = { "min": minDepth, "max": maxDepth };
+    scalesValues["width"] = { "min": minWidth, "max": maxWidth };
+    scalesValues["turret"] = { "min": minTurret, "max": maxTurret };
+    scalesValues["porthole"] = { "min": minPorthole, "max": maxPorthole };
+
+    Object.keys(scalesValues).forEach(function(key) {
+        scaleFunctions[key] = d3.scaleLinear()
+            .domain([d3.min(
+                dataset.map(obj => obj[key])
+            ), d3.max(
+                dataset.map(obj => obj[key])
+            )])
+            .range([scalesValues[key].min, scalesValues[key].max]);
+    });
+}
+
 d3.json('/dataset').then(function (data) {
     dataset = data;
+    loadScales();
     loadDataset();
 });
 
@@ -57,10 +87,10 @@ function loadDataset() {
                     return dataset[positionIndex++].x;
                 })
                 .attr('cy', function (datapoint) {
-                    return datapoint.depth
+                    return scaleFunctions["depth"](datapoint.depth)
                 })
                 .attr('rx', function (datapoint) {
-                    return datapoint.width
+                    return scaleFunctions["width"](datapoint.width)
                 })
                 .attr('ry', submarine_height)
                 .attr("stroke-width", 2)
@@ -74,10 +104,10 @@ function loadDataset() {
             g.append("circle")
                 .attr('cx', getSecondPortholePosition())
                 .attr("cy", function (datapoint) {
-                    return datapoint.depth
+                    return scaleFunctions["depth"](datapoint.depth)
                 })
                 .attr("r", function (datapoint) {
-                    return datapoint.porthole
+                    return scaleFunctions["porthole"](datapoint.porthole)
                 })
                 .attr("class", "first-porthole")
                 .attr("fill", "black");
@@ -88,10 +118,10 @@ function loadDataset() {
             g.append("circle")
                 .attr('cx', getCenterPosition())
                 .attr("cy", function (datapoint) {
-                    return datapoint.depth
+                    return scaleFunctions["depth"](datapoint.depth)
                 })
                 .attr("r", function (datapoint) {
-                    return datapoint.porthole
+                    return scaleFunctions["porthole"](datapoint.porthole)
                 })
                 .attr("class", "second-porthole")
                 .attr("fill", "black");
@@ -133,10 +163,10 @@ function loadDataset() {
                     return dataset[positionIndex++].x;
                 })
                 .attr('cy', function (datapoint) {
-                    return datapoint.depth
+                    return scaleFunctions["depth"](datapoint.depth)
                 })
                 .attr('rx', function (datapoint) {
-                    return datapoint.width
+                    return scaleFunctions["width"](datapoint.width)
                 })
                 .attr('ry', submarine_height)
                 .attr("stroke-width", 2)
@@ -151,10 +181,10 @@ function loadDataset() {
                 .transition(tx)
                 .attr('cx', getSecondPortholePosition())
                 .attr("cy", function (datapoint) {
-                    return datapoint.depth
+                    return scaleFunctions["depth"](datapoint.depth)
                 })
                 .attr("r", function (datapoint) {
-                    return datapoint.porthole
+                    return scaleFunctions["porthole"](datapoint.porthole)
                 })
                 .attr("class", "first-porthole")
                 .attr("fill", "black");
@@ -166,10 +196,10 @@ function loadDataset() {
                 .transition(tx)
                 .attr('cx', getCenterPosition())
                 .attr("cy", function (datapoint) {
-                    return datapoint.depth
+                    return scaleFunctions["depth"](datapoint.depth)
                 })
                 .attr("r", function (datapoint) {
-                    return datapoint.porthole
+                    return scaleFunctions["porthole"](datapoint.porthole)
                 })
                 .attr("class", "second-porthole")
                 .attr("fill", "black");
@@ -238,19 +268,19 @@ function loadDataset() {
 
             const angle = 1 / 8;
 
-            const y = datapoint.depth;
+            const y = scaleFunctions["depth"](datapoint.depth);
 
-            const startX = x + datapoint.width * Math.cos(Math.PI * (angle));
+            const startX = x + scaleFunctions["width"](datapoint.width) * Math.cos(Math.PI * (angle));
             const startY = y + submarine_height * Math.sin(Math.PI * angle);
-            const endX = x + datapoint.width * Math.cos(Math.PI * -angle);
+            const endX = x + scaleFunctions["width"](datapoint.width) * Math.cos(Math.PI * -angle);
             const endY = y + submarine_height * Math.sin(Math.PI * -angle);
 
             return [
                 startX, startY,
-                startX + datapoint.width / 4, startY + submarine_height / 2,
-                startX + datapoint.width / 2, startY + submarine_height / 2,
-                startX + datapoint.width / 2, endY - submarine_height / 2,
-                startX + datapoint.width / 4, endY - submarine_height / 2,
+                startX + scaleFunctions["width"](datapoint.width) / 4, startY + submarine_height / 2,
+                startX + scaleFunctions["width"](datapoint.width) / 2, startY + submarine_height / 2,
+                startX + scaleFunctions["width"](datapoint.width) / 2, endY - submarine_height / 2,
+                startX + scaleFunctions["width"](datapoint.width) / 4, endY - submarine_height / 2,
                 endX, endY
             ]
         };
@@ -259,12 +289,12 @@ function loadDataset() {
     function turretPosition() {
         return function (datapoint) {
             const x = datapoint.x;
-            const y = datapoint.depth - submarine_height;
+            const y = scaleFunctions["depth"](datapoint.depth) - submarine_height;
 
             return [
                 x, y,
-                x, y - datapoint.turret,
-                x - datapoint.turret / 3, y - datapoint.turret
+                x, y - scaleFunctions["turret"](datapoint.turret),
+                x - scaleFunctions["turret"](datapoint.turret) / 3, y - scaleFunctions["turret"](datapoint.turret)
             ];
         };
     }
@@ -287,7 +317,7 @@ function loadDataset() {
 
     function getSecondPortholePosition() {
         return function (datapoint) {
-            const position = dataset[positionIndex].x - datapoint.width / 2;
+            const position = dataset[positionIndex].x - scaleFunctions["width"](datapoint.width) / 2;
             positionIndex++;
             return position;
         };
